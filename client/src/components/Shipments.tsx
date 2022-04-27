@@ -7,11 +7,13 @@ import '@coreui/coreui/dist/css/coreui.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { createShipment } from "../redux/slices/shipments";
 import ShipmentItem from "./ShipmentItem";
+import DeliveryItem from "./DeliveryItem";
 
 function Shipments() {
   const [item, setItem] = useState("");
   const [quantity, setQuantity] = useState(Number);
-  const [address, setAddress] = useState("");
+  const [fromaddress, setFromaddress] = useState("");
+  const [toaddress, setToaddress] = useState("");
   const [phone, setPhone] = useState("");
   const [partner, setPartner] = useState("");
   const [visible, setVisible] = useState(false);
@@ -20,26 +22,39 @@ function Shipments() {
   const { shipments, isError, isSuccess, message } = useAppSelector(
     (state) => state.shipments
   );
+  const { profile } = useAppSelector(
+    (state) => state.profile
+  );
+
+  const { deliveries } = useAppSelector(
+    (state) => state.deliveries
+  );
+
+  const { partners } = useAppSelector(
+    (state) => state.partners
+  );
+
   const onSubmit = () => {
-    console.log(item);
-    dispatch(createShipment({ itemname: item, quantity, address, phone, partnerid: partner }));
+    console.log("partner ", partner);
+    dispatch(createShipment({ itemname: item, quantity, fromaddress, toaddress, phone, partnerid: partner }));
     setVisible(false);
     resetForm();
   };
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success(message);
+      //toast.success(message);
     }
     if (isError) {
       toast.error(message);
     }
-  }, [shipments, message, isError, isSuccess]);
+  }, [shipments, deliveries, partners, message, isError, isSuccess]);
 
   const resetForm = () => {
       setItem("");
       setQuantity(1);
-      setAddress("");
+      setFromaddress("");
+      setToaddress("");
       setPhone("");
       setPartner("");
   }
@@ -52,9 +67,15 @@ function Shipments() {
     setVisible(false);
     resetForm();
   }
+
   return (
   <div>
     <section>
+      {profile?.isPartner ? <>
+        <p>Below are the orders ready for delivery.</p>
+        {deliveries && deliveries.length > 0 ? (deliveries.map((shipment) => <DeliveryItem key={shipment._id} shipment={shipment} />))
+            : <p>No orders to deliever.</p>}
+      </>: <>
       <button
         onClick={setModal}
         className="float-right flex space-x-2 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 px-4 py-2 text-white">
@@ -90,16 +111,27 @@ function Shipments() {
                         value={quantity}
                         onChange={(e) => setQuantity(parseInt(e.target.value))}
                     />
-                    <label htmlFor="address" className="text-lg font-medium">
-                        Address
+                    <label htmlFor="fromaddress" className="text-lg font-medium">
+                        From Address
                     </label>
                     <input
                         className="border-2 border-gray-500 p-2 px-4 outline-none flex-grow w-full"
                         type="text"
-                        name="address"
+                        name="fromaddress"
                         placeholder="Address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        value={fromaddress}
+                        onChange={(e) => setFromaddress(e.target.value)}
+                    />
+                    <label htmlFor="toaddress" className="text-lg font-medium">
+                        To Address
+                    </label>
+                    <input
+                        className="border-2 border-gray-500 p-2 px-4 outline-none flex-grow w-full"
+                        type="text"
+                        name="toaddress"
+                        placeholder="Address"
+                        value={toaddress}
+                        onChange={(e) => setToaddress(e.target.value)}
                     />
                     <label htmlFor="phone" className="text-lg font-medium">
                         Phone
@@ -115,14 +147,15 @@ function Shipments() {
                     <label htmlFor="partner" className="text-lg font-medium">
                         Partner
                     </label>
-                    <input
-                        className="border-2 border-gray-500 p-2 px-4 outline-none flex-grow w-full"
-                        type="text"
-                        name="partner"
-                        placeholder="Partner"
-                        value={partner}
-                        onChange={(e) => setPartner(e.target.value)}
-                    />
+                    <select 
+                      className="border-2 border-gray-500 p-2 px-4 outline-none flex-grow w-full"
+                      name="partner"
+                      value={partner}
+                      onChange={e => setPartner(e.target.value)}
+                      >
+                      <option value="none" ></option>
+                      {partners.map((ptnr, i) => <option value={ptnr._id} >{ptnr.name}</option>)}
+                    </select>
                 </div>
             </form>
         </CModalBody>
@@ -134,6 +167,8 @@ function Shipments() {
           </div>}
         {shipments && shipments.length > 0 ? (shipments.map((shipment) => <ShipmentItem key={shipment._id} shipment={shipment} />))
             : <p>No orders placed yet.</p>}
+      </>
+      }
     </section>
     </div>
   );

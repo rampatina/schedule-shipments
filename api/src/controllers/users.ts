@@ -8,7 +8,7 @@ import User from "../model/users";
 // * @access Public
 const register = asyncHandler(async (req: any, res: any) => {
   console.log('Called register endpoint');
-  const { name, email, password } = req.body;
+  const { name, email, password, isPartner } = req.body;
   if (!name || !email || !password) {
     res.status(400);
     throw new Error("Please provide a valid crendentials");
@@ -25,7 +25,7 @@ const register = asyncHandler(async (req: any, res: any) => {
   const salt = await bcryptjs.genSalt(10);
   const hashedPassword = await bcryptjs.hash(password, salt);
 
-  const user = await User.create({ name, email, password: hashedPassword });
+  const user = await User.create({ name, email, password: hashedPassword, isPartner });
 
   if (user) {
     //res.status(201).json({ ...user._doc, token: generateJWT(user._id) }); TODO
@@ -53,6 +53,14 @@ const login = asyncHandler(async (req: any, res: any) => {
   }
 });
 
+// @route GET /api/users/partners
+// @access Private
+const getPartners = asyncHandler(async (req:any, res:any) => {
+  const users = await User.find({ isPartner: true }, '_id name');
+  console.log('users ', users);
+  res.status(200).send(users);
+});
+
 // * @desc Get user's data
 // * @route GET /api/users/me
 // * @access Private
@@ -67,4 +75,4 @@ function generateJWT(id: string) {
   });
 }
 
-export { register, login, getMe };
+export { register, login, getMe, getPartners };

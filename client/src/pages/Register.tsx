@@ -17,10 +17,15 @@ function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    isPartner: false
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
+  };
+
+  const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((p) => ({ ...p, [e.target.name]: !formData.isPartner  }));
   };
 
   const navigate: NavigateFunction = useNavigate();
@@ -105,6 +110,16 @@ function Register() {
               className="border px-2 py-1 outline-none focus:ring-2 ring-blue-500 transition-all duration-200"
               value={formData.confirmPassword}
               onChange={onChange}
+            />
+          </div>
+          <div className="flex flex-col space-y-1">
+            <label htmlFor="isPartner">Are you a delivery partner</label>
+            <input
+              type="checkbox"
+              name="isPartner"
+              className="border px-2 py-1 outline-none focus:ring-2 ring-blue-500 transition-all duration-200"
+              checked={formData.isPartner}
+              onChange={onCheckboxChange}
             />
           </div>
           <button className="block bg-black text-white py-2 w-full hover:shadow-md hover:scale-105 transform transition-all duration-200">

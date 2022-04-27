@@ -4,6 +4,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  isPartner: boolean;
 }
 
 const UserSchema: Schema = new Schema(
@@ -21,6 +22,9 @@ const UserSchema: Schema = new Schema(
       type: String,
       required: [true, "Please add a password"],
     },
+    isPartner: {
+      type: Boolean,
+    }
   },
   {
     timestamps: true,

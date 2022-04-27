@@ -26,6 +26,7 @@ function Profile() {
         <h1 className="text-3xl font-bold">Welcome {profile?.name}!</h1>
         <p className="text-xl font-bold text-gray-600">Your full name: {profile?.name}</p>
         <p className="text-xl font-bold text-gray-600">Your email    : {profile?.email}</p>
+        <p className="text-xl font-bold text-gray-600">Are you delivery partner   : {profile?.isPartner? "Yes": "No"}</p>
       </section>
     </div>
   );

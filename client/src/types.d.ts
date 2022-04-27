@@ -12,10 +12,17 @@ export interface User {
     name: string;
     email: string;
     password: string;
+    isPartner: boolean;
   }
 
   export interface Profile {
     email: string;
+    name: string;
+    isPartner: boolean
+  }
+
+  export interface Partner {
+    _id: string;
     name: string;
   }
 
@@ -24,7 +31,8 @@ export interface User {
     userid: string;
     itemname: string;
     quantity: number;
-    address: string;
+    fromaddress: string;
+    toaddress: string;
     phone: number;
     partnerid: string;
     status: string;

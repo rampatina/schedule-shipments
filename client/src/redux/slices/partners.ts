@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Profile } from "../../types";
-import { authService } from "../services/auth";
+import { Partner } from "../../types";
+import { shipmentServices } from "../services/shipments";
 import { RootState } from "../store";
 
 interface InitialState {
-  profile: Profile | null;
+  partners: Partner[];
   isError: boolean;
   isSuccess: boolean;
   isLoading: boolean;
@@ -12,51 +12,51 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
-  profile: null,
+  partners: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
 };
 
-//Get profile
-export const getProfile = createAsyncThunk<Profile, void, { state: RootState }>(
-  "auth/profile",
-  async (profile, thunkApi): Promise<Profile> => {
+//Get partners
+export const getPartners = createAsyncThunk<Partner[], void, { state: RootState }>(
+  "shipments/getPartners",
+  async (partners, thunkApi): Promise<Partner[]> => {
     try {
-      return await authService.profile(
+      return await shipmentServices.partners(
         thunkApi.getState().auth.user?.token as string
       );
     } catch (err) {
       console.log(err);
-      return {email: "", name: "", isPartner: false};
+      return [];
     }
   }
 );
 
-export const profileSlice = createSlice({
-  name: "profile",
+export const partnersSlice = createSlice({
+  name: "partners",
   initialState,
   reducers: {
     reset: () => initialState,
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getProfile.pending, (state) => {
+      .addCase(getPartners.pending, (state) => {
         state.isLoading = true;
         state.message = "Loading profile...";
       })
-      .addCase(getProfile.fulfilled, (state, action) => {
+      .addCase(getPartners.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.message = "Successfully registered";
-        state.profile = action.payload as Profile;
+        state.partners = action.payload as Partner[];
       })
-      .addCase(getProfile.rejected, (state, action) => {
+      .addCase(getPartners.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = (action.payload as string) || "Something went wrong";
-        state.profile = null;
+        state.partners = [];
       })
   },
 });

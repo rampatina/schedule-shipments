@@ -4,7 +4,8 @@ export interface IShipment extends Document {
   userid: string;
   itemname: string;
   quantity: number;
-  address: string;
+  fromaddress: string;
+  toaddress: string;
   phone: number;
   partnerid: string;
   status: string;
@@ -25,7 +26,11 @@ const ShipmentSchema: Schema = new Schema(
       type: Number,
       required: [true, "Please add a quantity"],
     },
-    address: {
+    fromaddress: {
+      type: String,
+      required: [true, "Please add a item name"],
+    },
+    toaddress: {
       type: String,
       required: [true, "Please add a item name"],
     },

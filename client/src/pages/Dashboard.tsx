@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useNavigate, NavigateFunction } from "react-router-dom";
 import Shipments from "../components/Shipments";
-import { getShipments, reset } from "../redux/slices/shipments";
+import { getDeliveries, getShipments, reset } from "../redux/slices/shipments";
+import { getProfile } from "../redux/slices/profile";
+import { getPartners } from "../redux/slices/partners";
 
 function Dashboard() {
   const { user } = useAppSelector((state) => state.auth);
@@ -14,6 +16,9 @@ function Dashboard() {
       navigate("/login");
     } else {
       dispatch(getShipments());
+      dispatch(getProfile());
+      dispatch(getDeliveries());
+      dispatch(getPartners())
     }
 
     return dispatch(reset());

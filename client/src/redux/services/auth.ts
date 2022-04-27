@@ -40,5 +40,5 @@ export const authService = {
   register,
   logout,
   login,
-  profile,
+  profile
 };
